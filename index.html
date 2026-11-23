@@ -3,197 +3,153 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>GTA - Grove Street Clone</title>
+<title>GTA Grove Street - Pixel Art</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:#111;overflow:hidden;font-family:Arial,sans-serif;color:#fff;touch-action:none}
-#game{position:fixed;inset:0;width:100%;height:100%;display:block;background:#2d5a27}
-#hud{position:fixed;top:0;left:0;right:0;padding:8px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
-.hud-box{background:rgba(0,0,0,.65);padding:6px 10px;border-radius:10px;font-weight:900;font-size:14px;border:2px solid #fff}
-#health{color:#3dff5e}#money{color:#ffe93d}
-#stars{color:#ffd700;font-size:18px;letter-spacing:2px}
-#mission{position:fixed;top:52px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);padding:10px 16px;border-radius:12px;text-align:center;font-weight:900;z-index:10;max-width:92%;border:2px solid #00ff88}
-#mission small{display:block;font-weight:400;font-size:12px;margin-top:3px;color:#ccc}
-#controls{position:fixed;bottom:12px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 12px;z-index:10}
-#joy{width:130px;height:130px;background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.6);border-radius:50%;position:relative}
-#knob{width:55px;height:55px;background:#fff;border-radius:50%;position:absolute;left:37px;top:37px;box-shadow:0 4px 10px #000}
-.btns{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.btn{width:72px;height:62px;border-radius:14px;border:3px solid #fff;font-weight:900;font-size:12px;color:#fff;box-shadow:0 4px 0 #000}
-#btnPunch{background:#e74c3c}#btnCar{background:#3498db}#btnRun{background:#f39c12}
-#startScreen{position:fixed;inset:0;background:linear-gradient(180deg,#0a3d1a,#000);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;text-align:center;padding:20px}
-#startScreen h1{font-size:52px;line-height:.9;text-shadow:4px 4px 0 #000;letter-spacing:-1px}
-#startScreen h1 span{color:#00ff88}
-#startScreen p{margin:14px 0;color:#ddd}
-#startBtn{padding:16px 42px;font-size:22px;font-weight:900;background:#00ff88;border:4px solid #fff;border-radius:50px;color:#000}
-#wasted{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:99}
-#wasted h2{font-size:70px;color:#ff2222;letter-spacing:5px}
-#wasted button{margin-top:20px;padding:14px 30px;font-size:18px;font-weight:900;border-radius:20px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;font-family:Arial;color:#fff;touch-action:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#top{position:fixed;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;z-index:10;pointer-events:none}
+.pill{background:rgba(0,0,0,.7);padding:7px 10px;border-radius:20px;font-weight:900;font-size:13px;border:1px solid #fff}
+#mission{position:fixed;top:48px;left:50%;transform:translateX(-50%);background:#111;border:2px solid #00ff88;padding:8px 14px;border-radius:12px;font-size:13px;font-weight:900;z-index:10;text-align:center;white-space:nowrap}
+#controls{position:fixed;bottom:10px;left:0;right:0;display:flex;justify-content:space-between;padding:0 10px;z-index:10;align-items:flex-end}
+#joy{width:120px;height:120px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.7);border-radius:50%;position:relative}
+#knob{width:50px;height:50px;background:#fff;border-radius:50%;position:absolute;left:35px;top:35px}
+.b{width:68px;height:58px;border-radius:14px;border:2px solid #fff;color:#fff;font-weight:900;font-size:11px}
+#start{position:fixed;inset:0;background:#0a3d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;text-align:center;padding:20px}
+#start h1{font-size:48px;line-height:.95}#start h1 span{color:#00ff88}
+#startBtn{margin-top:18px;padding:15px 38px;font-size:20px;font-weight:900;background:#00ff88;border:3px solid #fff;border-radius:40px}
+#wasted{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:99}
+#wasted h2{font-size:60px;color:red}
 </style>
 </head>
 <body>
-<canvas id="game"></canvas>
-<div id="hud">
-<div class="hud-box">❤️ <span id="health">100</span> &nbsp; 💰 $<span id="money">250</span></div>
-<div class="hud-box">⭐ <span id="stars">☆☆☆☆☆</span></div>
-<div class="hud-box" id="speed">🚶 WALK</div>
-</div>
-<div id="mission">🏠 GROVE STREET - Welcome home, CJ!<small>Steal a car with CAR button • Punch Ballas • Don't let cops catch you • Survive!</small></div>
-<div id="controls">
-<div id="joy"><div id="knob"></div></div>
-<div class="btns">
-<button class="btn" id="btnCar">🚗<br>CAR</button>
-<button class="btn" id="btnPunch">👊<br>PUNCH</button>
-<button class="btn" id="btnRun">🏃<br>RUN</button>
-</div>
-</div>
-<div id="startScreen">
-<h1>GTA<br><span>GROVE STREET</span></h1>
-<p>🚗 Steal Cars • 👊 Fight Ballas • ⭐ Escape Cops<br>🗺️ Big Open World • 📱 Mobile Controls</p>
-<button id="startBtn" onclick="startGame()">▶ START GAME</button>
-<p style="font-size:12px;opacity:.7">A fan-made GTA-style game. Not affiliated with Rockstar.</p>
-</div>
-<div id="wasted"><h2>WASTED</h2><p>The Ballas got you...</p><button onclick="respawn()">🔄 TRY AGAIN</button></div>
+<canvas id="c"></canvas>
+<div id="top"><div class="pill">❤️ <span id="hp">100</span> | 💰 $<span id="cash">250</span></div><div class="pill">⭐ <span id="st">☆☆☆☆☆</span></div></div>
+<div id="mission">🏠 GROVE STREET - Steal a car, fight Ballas!</div>
+<div id="controls"><div id="joy"><div id="knob"></div></div><div style="display:flex;flex-direction:column;gap:8px"><button class="b" style="background:#3498db" id="carBtn">🚗 CAR</button><button class="b" style="background:#e74c3c" id="punchBtn">👊 PUNCH</button><button class="b" style="background:#f39c12" id="runBtn">🏃 RUN</button></div></div>
+<div id="start"><h1>GTA<br><span>GROVE STREET</span><br><span style="font-size:16px;color:#fff">PIXEL ART EDITION</span></h1><p style="margin-top:12px">Real CJ • Real Cars • Big Map<br>Top-down like GTA 1 & 2</p><button id="startBtn" onclick="startG()">▶ START GAME</button></div>
+<div id="wasted"><h2>WASTED</h2><button onclick="respawn()" style="padding:12px 24px;font-size:18px;font-weight:900;border-radius:20px;margin-top:16px">🔄 TRY AGAIN</button></div>
 <script>
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-let W,H;function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}resize();addEventListener('resize',resize);
-let started=false,keys={},joy={x:0,y:0,active:false},runMode=false;
-let player={x:1000,y:1000,angle:0,speed:0,health:100,money:250,wanted:0,inCar:null,punch:0,dead:false};
-let cam={x:1000,y:1000,zoom:0.85};
-let cars=[],ped=[],cops=[],pickups=[];
-const WORLD=2200;
-// Build world: houses, roads, cars
-let houses=[];
-for(let i=0;i<18;i++){houses.push({x:150+ (i%6)*360, y:150+Math.floor(i/6)*650, w:180,h:120, color:['#f1c40f','#e67e22','#9b59b6','#1abc9c','#e74c3c','#3498db'][i%6], roof:['#c0392b','#2c3e50','#8e44ad'][i%3]})}
-function makeCar(x,y,color){return {x,y,angle:Math.random()*6.28,speed:0,color,driver:false,health:100}}
-for(let i=0;i<14;i++){cars.push(makeCar(200+Math.random()*1800, 200+Math.random()*1800, ['#ff2d2d','#2d9cff','#ffde00','#00ff88','#ff6bff','#ffffff','#ff8c00'][i%7]))}
-for(let i=0;i<10;i++){ped.push({x:300+Math.random()*1600,y:300+Math.random()*1600,angle:0,hp:100,team:i<5?'ballas':'civil',speed:1.2})}
-for(let i=0;i<4;i++){pickups.push({x:400+Math.random()*1400,y:400+Math.random()*1400,type:i%2?'money':'health'})}
-function startGame(){started=true;document.getElementById('startScreen').style.display='none';}
-function respawn(){player.health=100;player.x=1000;player.y=1000;player.dead=false;player.wanted=0;document.getElementById('wasted').style.display='none';}
-// Controls
-let joyEl=document.getElementById('joy'),knob=document.getElementById('knob');
-function joyMove(e){let r=joyEl.getBoundingClientRect();let t=e.touches?e.touches[0]:e;let dx=(t.clientX-r.left-65)/55,dy=(t.clientY-r.top-65)/55;let l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}joy.x=dx;joy.y=dy;knob.style.left=(37+dx*28)+'px';knob.style.top=(37+dy*28)+'px';}
-function joyEnd(){joy.x=0;joy.y=0;knob.style.left='37px';knob.style.top='37px';}
-joyEl.addEventListener('touchstart',joyMove);joyEl.addEventListener('touchmove',joyMove);joyEl.addEventListener('touchend',joyEnd);
-joyEl.addEventListener('mousedown',e=>{joy.active=true;joyMove(e)});addEventListener('mousemove',e=>{if(joy.active)joyMove(e)});addEventListener('mouseup',()=>{joy.active=false;joyEnd()});
-document.getElementById('btnRun').onclick=()=>{runMode=!runMode;document.getElementById('btnRun').style.background=runMode?'#27ae60':'#f39c12'};
-document.getElementById('btnPunch').onclick=()=>{if(!player.inCar)player.punch=12};
-document.getElementById('btnCar').onclick=()=>{
- if(player.inCar){player.inCar=null;player.x+=30;document.getElementById('speed').textContent='🚶 WALK';return;}
- let best=null,bd=90;for(let c of cars){let d=Math.hypot(c.x-player.x,c.y-player.y);if(d<bd){bd=d;best=c}}
- if(best){player.inCar=best;best.driver=true;document.getElementById('speed').textContent='🚗 DRIVING';}
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');let W,H;function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}rs();addEventListener('resize',rs);
+let started=false,run=false,joy={x:0,y:0};
+let P={x:1050,y:1050,a:0,hp:100,money:250,wanted:0,car:null,punch:0,dead:false,walk:0};
+let cam={x:1050,y:1050};let cars=[],peds=[],cops=[];
+const WORLD=2400;
+let houses=[];for(let i=0;i<16;i++)houses.push({x:180+(i%4)*560,y:180+Math.floor(i/4)*560,w:200,h:130,c:['#f1c40f','#e67e22','#1abc9c','#9b59b6'][i%4]});
+for(let i=0;i<12;i++)cars.push({x:300+Math.random()*1800,y:300+Math.random()*1800,a:Math.random()*6.28,sp:0,color:['#ff2d2d','#2d9cff','#ffde00','#00c853','#ff6bff','#fff','#ff8c00','#00bcd4'][i%8]});
+for(let i=0;i<9;i++)peds.push({x:400+Math.random()*1600,y:400+Math.random()*1600,a:0,hp:100,team:i<4?'ballas':'civil',walk:0});
+function startG(){started=true;document.getElementById('start').style.display='none';setTimeout(()=>document.getElementById('mission').style.display='none',5000);}
+function respawn(){P.hp=100;P.x=1050;P.y=1050;P.dead=false;P.wanted=0;document.getElementById('wasted').style.display='none';}
+// joystick
+let jEl=document.getElementById('joy'),kn=document.getElementById('knob');
+function jm(e){let r=jEl.getBoundingClientRect();let t=e.touches?e.touches[0]:e;let dx=(t.clientX-r.left-60)/50,dy=(t.clientY-r.top-60)/50;let l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}joy.x=dx;joy.y=dy;kn.style.left=(35+dx*25)+'px';kn.style.top=(35+dy*25)+'px';}
+function je(){joy.x=0;joy.y=0;kn.style.left='35px';kn.style.top='35px';}
+jEl.addEventListener('touchstart',jm);jEl.addEventListener('touchmove',jm);jEl.addEventListener('touchend',je);
+document.getElementById('runBtn').onclick=()=>{run=!run};
+document.getElementById('punchBtn').onclick=()=>{if(!P.car)P.punch=14};
+document.getElementById('carBtn').onclick=()=>{
+ if(P.car){P.car=null;P.x+=34;return}
+ let best=null,bd=100;for(let c of cars){let d=Math.hypot(c.x-P.x,c.y-P.y);if(d<bd){bd=d;best=c}}
+ if(best)P.car=best;
 };
-addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+function drawPerson(x,y,a,isCJ,isBallas,walk){
+ ctx.save();ctx.translate(x,y);ctx.rotate(a+Math.PI/2);
+ // shadow
+ ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(0,6,14,8,0,0,7);ctx.fill();
+ // legs - walking animation
+ let legSwing=Math.sin(walk)*5;
+ ctx.fillStyle=isCJ?'#1a1a1a':'#222';ctx.fillRect(-7,6+legSwing,6,12);ctx.fillRect(1,6-legSwing,6,12);
+ // body - green for CJ, purple for Ballas, white for civil
+ ctx.fillStyle=isCJ?'#00a651':isBallas?'#7d3cff':'#ecf0f1';ctx.fillRect(-9,-8,18,18);
+ ctx.fillStyle='#000';ctx.fillRect(-9,-8,18,3);
+ // arms
+ ctx.fillStyle='#fdcb9e';ctx.fillRect(-13,-4,4,12);ctx.fillRect(9,-4,4,12);
+ // head - skin tone + cap
+ ctx.fillStyle='#8d5524';ctx.beginPath();ctx.arc(0,-14,9,0,7);ctx.fill();
+ ctx.fillStyle=isCJ?'#fff':'#111';ctx.fillRect(-9,-22,18,5);ctx.fillRect(-9,-22,18,2);
+ ctx.fillStyle='#111';ctx.fillRect(-3,-16,2,2);ctx.fillRect(2,-16,2,2);
+ ctx.restore();
+ // name
+ if(isCJ){ctx.fillStyle='#fff';ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('CJ',x,y-32)}
+ if(isBallas){ctx.font='bold 11px Arial';ctx.fillText('BALLA',x,y-32)}
+}
+function drawCar(c){
+ ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.a);
+ // shadow
+ ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(-36,-20,72,40);
+ // wheels - black
+ ctx.fillStyle='#111';ctx.fillRect(-28,-24,14,8);ctx.fillRect(-28,16,14,8);ctx.fillRect(14,-24,14,8);ctx.fillRect(14,16,14,8);
+ // body
+ ctx.fillStyle=c.color;ctx.beginPath();ctx.roundRect(-34,-18,68,36,8);ctx.fill();
+ ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(-30,-14,60,6);
+ // windshield + windows
+ ctx.fillStyle='#bfeaff';ctx.fillRect(-6,-15,14,30);
+ ctx.fillStyle='#222';ctx.fillRect(-12,-15,4,30);ctx.fillRect(10,-15,4,30);
+ // headlights
+ ctx.fillStyle='#ffffaa';ctx.fillRect(32,-12,3,6);ctx.fillRect(32,6,3,6);
+ ctx.fillStyle='#ff2222';ctx.fillRect(-35,-12,3,6);ctx.fillRect(-35,6,3,6);
+ // roof
+ ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(-2,-13,10,26);
+ ctx.restore();
+}
 function update(){
- if(!started||player.dead)return;
- let ix=joy.x,iy=joy.y;
- if(keys['w'])iy=-1;if(keys['s'])iy=1;if(keys['a'])ix=-1;if(keys['d'])ix=1;
- if(keys[' '])player.punch=12;
- let mag=Math.hypot(ix,iy);if(mag>1){ix/=mag;iy/=mag}
- let car=player.inCar;
+ if(!started||P.dead)return;
+ let ix=joy.x,iy=joy.y,m=Math.hypot(ix,iy);if(m>1){ix/=m;iy/=m}
+ let car=P.car;
  if(car){
-   if(mag>0.1){car.angle=Math.atan2(iy,ix);car.speed=Math.min(car.speed+0.5, runMode?9:6);}
-   else car.speed*=0.92;
-   car.x+=Math.cos(car.angle)*car.speed;car.y+=Math.sin(car.angle)*car.speed;
-   player.x=car.x;player.y=car.y;player.angle=car.angle;
-   document.getElementById('speed').textContent='🚗 ' + Math.round(car.speed*12)+' MPH';
-   // hit peds
-   for(let p of ped){if(Math.hypot(p.x-car.x,p.y-car.y)<32 && car.speed>3){p.hp-=30;player.money+=10;player.wanted=Math.min(5,player.wanted+1);}}
+   if(m>0.1){car.a=Math.atan2(iy,ix);car.sp=Math.min(car.sp+0.6,run?10:7)}else car.sp*=0.92;
+   car.x+=Math.cos(car.a)*car.sp;car.y+=Math.sin(car.a)*car.sp;P.x=car.x;P.y=car.y;P.a=car.a;
+   for(let p of peds){if(Math.hypot(p.x-car.x,p.y-car.y)<30&&car.sp>3){p.hp-=40;P.money+=10;P.wanted=Math.min(5,P.wanted+1)}}
  } else {
-   let sp=(runMode?4.2:2.6)*(mag>0.1?1:0);
-   if(mag>0.1)player.angle=Math.atan2(iy,ix);
-   player.x+=ix*sp;player.y+=iy*sp;
-   document.getElementById('speed').textContent=runMode?'🏃 RUN':'🚶 WALK';
-   if(player.punch>0){
-     player.punch--;
-     for(let p of ped){if(Math.hypot(p.x-player.x,p.y-player.y)<42){p.hp-=2;if(p.hp<=0){player.money+=50;}}}
-   }
+   let sp=(run?4.5:2.8)*(m>0.1?1:0);if(m>0.1)P.a=Math.atan2(iy,ix);
+   P.x+=ix*sp;P.y+=iy*sp;P.walk+=sp*0.4;
+   if(P.punch>0){P.punch--;for(let p of peds){if(Math.hypot(p.x-P.x,p.y-P.y)<44){p.hp-=2;if(p.hp<=0)P.money+=50}}}
  }
- player.x=Math.max(40,Math.min(WORLD-40,player.x));player.y=Math.max(40,Math.min(WORLD-40,player.y));
- // peds AI
- for(let p of ped){
-   if(p.hp<=0){p.x=300+Math.random()*1600;p.y=300+Math.random()*1600;p.hp=100;continue}
+ P.x=Math.max(40,Math.min(WORLD-40,P.x));P.y=Math.max(40,Math.min(WORLD-40,P.y));
+ for(let p of peds){
+   if(p.hp<=0){p.x=300+Math.random()*1800;p.y=300+Math.random()*1800;p.hp=100;continue}
    if(p.team==='ballas'){
-     let d=Math.hypot(player.x-p.x,player.y-p.y);
-     if(d<220 && !car){p.x+=(player.x-p.x)/d*1.4;p.y+=(player.y-p.y)/d*1.4;p.angle=Math.atan2(player.y-p.y,player.x-p.x);
-       if(d<28){player.health-=0.4;player.wanted=Math.max(1,player.wanted);}}
-     else{p.x+=Math.cos(p.angle)*0.6;p.y+=Math.sin(p.angle)*0.6;if(Math.random()<0.01)p.angle=Math.random()*6.28}
-   } else {p.x+=Math.cos(p.angle)*0.7;p.y+=Math.sin(p.angle)*0.7;if(Math.random()<0.01)p.angle=Math.random()*6.28}
+     let d=Math.hypot(P.x-p.x,P.y-p.y);
+     if(d<240&&!car){p.x+=(P.x-p.x)/d*1.5;p.y+=(P.y-p.y)/d*1.5;p.a=Math.atan2(P.y-p.y,P.x-p.x);p.walk+=0.3;if(d<30)P.hp-=0.4}
+     else{p.x+=Math.cos(p.a)*0.7;p.y+=Math.sin(p.a)*0.7;p.walk+=0.1;if(Math.random()<0.01)p.a=Math.random()*6.28}
+   } else {p.x+=Math.cos(p.a)*0.8;p.y+=Math.sin(p.a)*0.8;p.walk+=0.1;if(Math.random()<0.01)p.a=Math.random()*6.28}
  }
- // cops spawn if wanted
- if(player.wanted>0 && cops.length<player.wanted*2 && Math.random()<0.02){cops.push({x:player.x+400,y:player.y+400,hp:100})}
- for(let c of cops){
-   let d=Math.hypot(player.x-c.x,player.y-c.y);
-   if(d>10){c.x+=(player.x-c.x)/d*2.2;c.y+=(player.y-c.y)/d*2.2}
-   if(d<30){player.health-=0.3}
- }
- // pickups
- for(let pu of pickups){if(Math.hypot(pu.x-player.x,pu.y-player.y)<30){if(pu.type==='health')player.health=Math.min(100,player.health+40);else player.money+=100;pu.x=400+Math.random()*1400;pu.y=400+Math.random()*1400;}}
- if(player.wanted>0 && Math.random()<0.001)player.wanted--;
- if(player.health<=0){player.dead=true;document.getElementById('wasted').style.display='flex';}
- document.getElementById('health').textContent=Math.ceil(player.health);
- document.getElementById('money').textContent=player.money;
- document.getElementById('stars').textContent='★'.repeat(player.wanted)+'☆'.repeat(5-player.wanted);
- // camera smooth + zoom out
- cam.x+=(player.x-cam.x)*0.12;cam.y+=(player.y-cam.y)*0.12;
+ if(P.wanted>0&&cops.length<P.wanted*2&&Math.random()<0.02)cops.push({x:P.x+400,y:P.y+400});
+ for(let c of cops){let d=Math.hypot(P.x-c.x,P.y-c.y);if(d>10){c.x+=(P.x-c.x)/d*2.3;c.y+=(P.y-c.y)/d*2.3}if(d<30)P.hp-=0.3}
+ if(P.hp<=0){P.dead=true;document.getElementById('wasted').style.display='flex'}
+ document.getElementById('hp').textContent=Math.ceil(P.hp);document.getElementById('cash').textContent=P.money;document.getElementById('st').textContent='★'.repeat(P.wanted)+'☆'.repeat(5-P.wanted);
+ cam.x+=(P.x-cam.x)*0.12;cam.y+=(P.y-cam.y)*0.12;
 }
 function draw(){
  ctx.fillStyle='#2d5a27';ctx.fillRect(0,0,W,H);
- if(!started){ctx.fillStyle='#fff';ctx.font='bold 20px Arial';ctx.textAlign='center';ctx.fillText('Tap START GAME',W/2,H/2);return}
- ctx.save();ctx.translate(W/2,H/2);ctx.scale(cam.zoom,cam.zoom);ctx.translate(-cam.x,-cam.y);
- // ground grid + roads
+ if(!started)return;
+ ctx.save();ctx.translate(W/2,H/2);ctx.scale(0.65,0.65);ctx.translate(-cam.x,-cam.y);
+ // ground
  ctx.fillStyle='#3a6b2e';ctx.fillRect(0,0,WORLD,WORLD);
- ctx.fillStyle='#3a3a3a';ctx.fillRect(0,0,WORLD,120);ctx.fillRect(0,1000,WORLD,140);ctx.fillRect(0,1900,WORLD,140);
- ctx.fillRect(0,0,140,WORLD);ctx.fillRect(1000,0,140,WORLD);ctx.fillRect(1900,0,140,WORLD);
- ctx.fillStyle='#ffde00';for(let x=0;x<WORLD;x+=60){ctx.fillRect(x,55,30,6);ctx.fillRect(x,1065,30,6);ctx.fillRect(x,1965,30,6)}
- for(let y=0;y<WORLD;y+=60){ctx.fillRect(65,y,6,30);ctx.fillRect(1065,y,6,30);ctx.fillRect(1965,y,6,30)}
- // sidewalk
- ctx.strokeStyle='#ddd';ctx.lineWidth=10;
- // houses - GROVE STREET
+ // roads
+ ctx.fillStyle='#333';ctx.fillRect(0,0,WORLD,120);ctx.fillRect(0,1100,WORLD,130);ctx.fillRect(0,2100,WORLD,130);
+ ctx.fillRect(0,0,130,WORLD);ctx.fillRect(1100,0,130,WORLD);ctx.fillRect(2100,0,130,WORLD);
+ ctx.fillStyle='#ffde00';for(let x=0;x<WORLD;x+=70){ctx.fillRect(x,58,32,6);ctx.fillRect(x,1158,32,6);ctx.fillRect(x,2158,32,6)}
+ for(let y=0;y<WORLD;y+=70){ctx.fillRect(58,y,6,32);ctx.fillRect(1158,y,6,32);ctx.fillRect(2158,y,6,32)}
+ // houses with driveways
  for(let h of houses){
-   ctx.fillStyle='#8a8a8a';ctx.fillRect(h.x-10,h.y-10,h.w+20,h.h+20);
-   ctx.fillStyle=h.color;ctx.fillRect(h.x,h.y,h.w,h.h);
-   ctx.fillStyle=h.roof;ctx.fillRect(h.x,h.y,h.w,18);
-   ctx.fillStyle='#fff';ctx.fillRect(h.x+20,h.y+45,30,35);ctx.fillRect(h.x+h.w-50,h.y+45,30,35);
-   ctx.fillStyle='#222';ctx.font='bold 14px Arial';ctx.fillText('🏠',h.x+10,h.y+20);
+   ctx.fillStyle='#aaa';ctx.fillRect(h.x-12,h.y-12,h.w+24,h.h+24);
+   ctx.fillStyle=h.c;ctx.fillRect(h.x,h.y,h.w,h.h);
+   ctx.fillStyle='#333';ctx.fillRect(h.x,h.y,h.w,16);
+   ctx.fillStyle='#fff';ctx.fillRect(h.x+18,h.y+50,32,38);ctx.fillRect(h.x+h.w-50,h.y+50,32,38);
+   ctx.fillStyle='#7a4a00';ctx.fillRect(h.x+h.w/2-18,h.y+70,36,50);
+   ctx.fillStyle='#555';ctx.fillRect(h.x+h.w/2-25,h.y+h.h,50,35);
  }
- // Grove Street sign
- ctx.fillStyle='#006400';ctx.fillRect(920,970,260,44);ctx.fillStyle='#fff';ctx.font='bold 18px Arial';ctx.fillText('GROVE STREET',940,998);
- // pickups
- for(let pu of pickups){ctx.font='28px Arial';ctx.fillText(pu.type==='health'?'❤️':'💰',pu.x-14,pu.y+10)}
- // cars - BIG & CLEAR
- for(let c of cars){
-   ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.angle);
-   ctx.fillStyle='#111';ctx.fillRect(-34,-18,68,36);
-   ctx.fillStyle=c.color;ctx.fillRect(-32,-16,64,32);ctx.fillStyle='#aee9ff';ctx.fillRect(-8,-14,18,28);
-   ctx.fillStyle='#fff';ctx.font='bold 14px Arial';ctx.fillText('🚗',-10,5);
-   ctx.restore();
-   ctx.fillStyle='#fff';ctx.font='10px Arial';ctx.fillText('CAR',c.x-12,c.y-28);
- }
- // peds
- for(let p of ped){
-   ctx.fillStyle=p.team==='ballas'?'#8e44ad':'#ecf0f1';ctx.beginPath();ctx.arc(p.x,p.y,14,0,7);ctx.fill();
-   ctx.fillStyle='#fdcb9e';ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.fill();
-   ctx.fillStyle=p.team==='ballas'?'💜':'🙂';ctx.font='16px Arial';ctx.fillText(p.team==='ballas'?'💜':'',p.x-8,p.y+5);
- }
- // cops
- for(let c of cops){ctx.fillStyle='#0033ff';ctx.beginPath();ctx.arc(c.x,c.y,15,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='18px Arial';ctx.fillText('👮',c.x-9,c.y+6)}
- // player - CJ in green
- ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);
- if(player.inCar){
-   ctx.fillStyle='#00ff88';ctx.fillRect(-38,-20,76,40);
- } else {
-   ctx.fillStyle='#00a651';ctx.beginPath();ctx.arc(0,0,16,0,7);ctx.fill();
-   ctx.fillStyle='#fdcb9e';ctx.beginPath();ctx.arc(8,0,9,0,7);ctx.fill();
-   if(player.punch>0){ctx.fillStyle='#fff';ctx.fillRect(10,-10,22,8)}
- }
- ctx.restore();
- ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.fillText('CJ • YOU',player.x-28,player.y-32);
- // mission arrow
- ctx.strokeStyle='#00ff88';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(player.x,player.y-50);ctx.lineTo(player.x,player.y-70);ctx.stroke();
+ // Grove Street sign small at top
+ ctx.fillStyle='#006400';ctx.fillRect(1080,1020,220,32);ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.textAlign='center';ctx.fillText('GROVE STREET',1190,1042);
+ for(let c of cars)drawCar(c);
+ for(let p of peds)drawPerson(p.x,p.y,p.a,false,p.team==='ballas',p.walk);
+ for(let c of cops){ctx.fillStyle='#0033ff';ctx.beginPath();ctx.arc(c.x,c.y,14,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.textAlign='center';ctx.fillText('👮',c.x,c.y+6)}
+ if(P.car)drawCar(P.car);
+ else drawPerson(P.x,P.y,P.a,true,false,P.walk);
  ctx.restore();
 }
 function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script>
 </body>
-  </html>
+</html>
